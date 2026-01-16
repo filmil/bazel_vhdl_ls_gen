@@ -26,4 +26,6 @@ jobs:
         run: "bazel build //..."
       - name: Test
         run: "bazel test //..."
+      - name: Integration test
+        run: "cd integration && bazel run @vhdl_ls_gen//:gen && bazel test //..."
 
