@@ -1,0 +1,19 @@
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+package(default_visibility = ["//visibility:public"])
+
+sh_binary(
+    name = "gen",
+    srcs = [
+        "gen_vhdl_ls.bash",
+    ],
+)
+
+sh_test(
+    name = "test",
+    srcs = [
+        "test.bash",
+    ],
+    size = "small",
+)

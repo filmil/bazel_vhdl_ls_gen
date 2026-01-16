@@ -1,0 +1,7 @@
+[libraries]
+some_library.files = [
+  "my_vhdl_lib/my_package.vhd"
+]
+some_other_library.files = [
+  "my_vhdl_lib/my_package.vhd"
+]
