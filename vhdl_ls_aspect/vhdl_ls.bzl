@@ -1,6 +1,11 @@
 _VHDL_LS_TAG = "vhdl_ls"
 _VHDL_LS_LIB_PREFIX = "vhdl_ls_lib_"
 
+_VHDL_RULE_KINDS = [
+    "filegroup",
+    "vhdl_library",
+]
+
 
 def _vhdl_ls_aspect_impl(target, ctx):
     # We only care about the current target. No transitive aggregation needed
@@ -8,7 +13,7 @@ def _vhdl_ls_aspect_impl(target, ctx):
 
     vhdl_ls_files = []
 
-    if ctx.rule.kind == "filegroup" and _VHDL_LS_TAG in ctx.rule.attr.tags:
+    if ctx.rule.kind in _VHDL_RULE_KINDS and _VHDL_LS_TAG in ctx.rule.attr.tags:
         lib_name = "unnamed"
         for tag in ctx.rule.attr.tags:
             if tag.startswith("vhdl_ls_lib_"):

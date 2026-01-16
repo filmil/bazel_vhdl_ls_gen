@@ -66,4 +66,6 @@ The reason this operates on filegroups is because different VHDL tooling require
 reusing source file lists anyways, so you are bound to have tool-independent
 file definitions already.
 
+If you need to add custom content to the generated file, create a file named
+`vhdl_ls.toml.add`, and add any content to be put into the *header* of the file.
 
