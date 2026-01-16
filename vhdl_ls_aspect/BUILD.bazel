@@ -1,0 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
+load(":vhdl_ls.bzl", "vhdl_ls_aspect")
+
+exports_files(["vhdl_ls.bzl"])

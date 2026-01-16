@@ -1,0 +1,24 @@
+load("@bazel_lib//lib:write_source_files.bzl", "write_source_file")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "srcs",
+    srcs = ["my_vhdl_lib/my_package.vhd"],
+    tags = ["vhdl_ls", "vhdl_ls_lib_some_library"],
+)
+
+filegroup(
+    name = "srcs_2",
+    srcs = ["my_vhdl_lib/my_package.vhd"],
+    tags = ["vhdl_ls", "vhdl_ls_lib_some_other_library"],
+)
+
+sh_test(
+    name = "test",
+    srcs = [
+        "test.bash",
+    ],
+    size = "small",
+)
