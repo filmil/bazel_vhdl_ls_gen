@@ -6,13 +6,24 @@ package(default_visibility = ["//visibility:public"])
 filegroup(
     name = "srcs",
     srcs = ["my_vhdl_lib/my_package.vhd"],
-    tags = ["vhdl_ls", "vhdl_ls_lib_some_library"],
+    tags = [
+        "vhdl_ls",
+        "vhdl_ls_lib_some_library",
+        # This removes the path prefix `my_vhdl_lib`.
+        "vhdl_ls_rem_my_vhdl_lib",
+        # This adds the path prefix `your_vhdl_lib`. Adds are applied
+        # after removed.
+        "vhdl_ls_add_your_vhdl_lib",
+    ],
 )
 
 filegroup(
     name = "srcs_2",
     srcs = ["my_vhdl_lib/my_package.vhd"],
-    tags = ["vhdl_ls", "vhdl_ls_lib_some_other_library"],
+    tags = [
+        "vhdl_ls",
+        "vhdl_ls_lib_some_other_library",
+    ],
 )
 
 sh_test(
