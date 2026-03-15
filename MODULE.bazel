@@ -1,6 +1,7 @@
 module(
     name = "vhdl_ls_gen",
     version = "0.0.1",
+    bazel_compatibility = [">=8.0.0"],
 )
 
 bazel_dep(name = "bazel_skylib", version = "1.8.1")
