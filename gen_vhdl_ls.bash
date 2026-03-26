@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd $BUILD_WORKSPACE_DIRECTORY
+cd "$BUILD_WORKSPACE_DIRECTORY"
 
 PREFIX_FILE="vhdl_ls.toml.add"
 PREFIX_FILE2="vhdl_ls.toml.prefix"
@@ -16,9 +16,6 @@ bazel build //... \
 
 echo "" > "${OUTPUT_FILE}"
 
-if [[ -f "${PREFIX_FILE}" ]]; then
-  cp "${PREFIX_FILE}" "${OUTPUT_FILE}"
-fi
 if [[ -f "${PREFIX_FILE}" ]]; then
   cp "${PREFIX_FILE}" "${OUTPUT_FILE}"
 fi
