@@ -19,9 +19,6 @@ echo "" > "${OUTPUT_FILE}"
 if [[ -f "${PREFIX_FILE}" ]]; then
   cp "${PREFIX_FILE}" "${OUTPUT_FILE}"
 fi
-if [[ -f "${PREFIX_FILE}" ]]; then
-  cp "${PREFIX_FILE}" "${OUTPUT_FILE}"
-fi
 if [[ -f "${PREFIX_FILE2}" ]]; then
   cp "${PREFIX_FILE2}" "${OUTPUT_FILE}"
 fi
