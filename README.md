@@ -33,6 +33,10 @@ filegroup(
         # Add this tag to name the library `some_library`. That is what vhdl_ls
         # will know it as.
         "vhdl_ls_lib_some_library",
+        # (Optional) Remove a prefix from the path of files in this filegroup.
+        # "vhdl_ls_rem_my_vhdl_lib/",
+        # (Optional) Add a prefix to the path of files in this filegroup.
+        # "vhdl_ls_add_new_prefix/",
     ],
 )
 
