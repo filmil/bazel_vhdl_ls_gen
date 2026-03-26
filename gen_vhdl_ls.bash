@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd $BUILD_WORKSPACE_DIRECTORY
+cd "$BUILD_WORKSPACE_DIRECTORY"
 
 PREFIX_FILE="vhdl_ls.toml.add"
 PREFIX_FILE2="vhdl_ls.toml.prefix"
