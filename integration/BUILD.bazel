@@ -31,5 +31,8 @@ sh_test(
     srcs = [
         "test.bash",
     ],
+    data = [
+        "vhdl_ls.toml",
+    ],
     size = "small",
 )
