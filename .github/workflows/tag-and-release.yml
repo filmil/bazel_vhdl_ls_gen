@@ -56,8 +56,8 @@ jobs:
       - name: Get repo name
         id: get_repo_name
         env:
-          REPOSITORY: ${{ github.repository }}
-        run: echo "REPO_NAME=$(echo "$REPOSITORY" | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: echo "REPO_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F '/' '{print $2}')" >> $GITHUB_ENV
       - name: "Publish source archive"
         uses: thedoctor0/zip-release@0.7.5
         with:
