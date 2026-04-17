@@ -50,10 +50,14 @@ jobs:
           generateReleaseNotes: true
       - name: Get release tag
         id: get_version
-        run: echo "VERSION=${{ steps.tag_version.outputs.new_tag }}" >> $GITHUB_ENV
+        env:
+          NEW_TAG: ${{ steps.tag_version.outputs.new_tag }}
+        run: echo "VERSION=$NEW_TAG" >> $GITHUB_ENV
       - name: Get repo name
         id: get_repo_name
-        run: echo "REPO_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: echo "REPO_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F '/' '{print $2}')" >> $GITHUB_ENV
       - name: "Publish source archive"
         uses: thedoctor0/zip-release@0.7.5
         with:
