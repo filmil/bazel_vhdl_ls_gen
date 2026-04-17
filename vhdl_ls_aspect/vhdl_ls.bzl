@@ -22,9 +22,9 @@ def _vhdl_ls_aspect_impl(target, ctx):
         for tag in ctx.rule.attr.tags:
             if tag.startswith(_VHDL_LS_LIB_PREFIX):
                 lib_name = tag.removeprefix(_VHDL_LS_LIB_PREFIX)
-            if tag.startswith(_VHDL_LS_REM_PREFIX):
+            elif tag.startswith(_VHDL_LS_REM_PREFIX):
                 path_remove = tag.removeprefix(_VHDL_LS_REM_PREFIX)
-            if tag.startswith(_VHDL_LS_ADD_PREFIX):
+            elif tag.startswith(_VHDL_LS_ADD_PREFIX):
                 path_add = tag.removeprefix(_VHDL_LS_ADD_PREFIX)
 
         manifest_file = ctx.actions.declare_file(target.label.name + ".vhdl_ls_part")
