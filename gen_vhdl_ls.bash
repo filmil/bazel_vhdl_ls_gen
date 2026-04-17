@@ -14,13 +14,13 @@ bazel build //... \
   --output_groups=vhdl_ls_manifests \
   --keep_going
 
-echo "" > "${OUTPUT_FILE}"
+printf "" > "${OUTPUT_FILE}"
 
 if [[ -f "${PREFIX_FILE}" ]]; then
-  cp "${PREFIX_FILE}" "${OUTPUT_FILE}"
+  cat "${PREFIX_FILE}" >> "${OUTPUT_FILE}"
 fi
 if [[ -f "${PREFIX_FILE2}" ]]; then
-  cp "${PREFIX_FILE2}" "${OUTPUT_FILE}"
+  cat "${PREFIX_FILE2}" >> "${OUTPUT_FILE}"
 fi
 
 # 3. Create the TOML header
