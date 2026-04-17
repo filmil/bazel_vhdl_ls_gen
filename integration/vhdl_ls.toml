@@ -1,5 +1,4 @@
 # Prefix.
-
 [libraries]
 some_library.files = [
   "your_vhdl_lib/my_package.vhd"
@@ -7,6 +6,7 @@ some_library.files = [
 some_other_library.files = [
   "my_vhdl_lib/my_package.vhd"
 ]
-
+some_other_library_2.files = [
+  "your_vhdl_lib_2/my_package.vhd"
+]
 # Suffix
-
