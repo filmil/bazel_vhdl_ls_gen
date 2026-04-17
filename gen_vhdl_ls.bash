@@ -14,13 +14,13 @@ bazel build //... \
   --output_groups=vhdl_ls_manifests \
   --keep_going
 
-printf "" > "${OUTPUT_FILE}"
+echo "" > "${OUTPUT_FILE}"
 
 if [[ -f "${PREFIX_FILE}" ]]; then
-  cat "${PREFIX_FILE}" >> "${OUTPUT_FILE}"
+  cp "${PREFIX_FILE}" "${OUTPUT_FILE}"
 fi
 if [[ -f "${PREFIX_FILE2}" ]]; then
-  cat "${PREFIX_FILE2}" >> "${OUTPUT_FILE}"
+  cp "${PREFIX_FILE2}" "${OUTPUT_FILE}"
 fi
 
 # 3. Create the TOML header
@@ -28,7 +28,7 @@ echo "[libraries]" >> "$OUTPUT_FILE"
 
 # 4. Find all generated parts in bazel-bin and append them
 # Note: We look inside bazel-bin based on the current package path
-find "$(bazel info bazel-bin)" -name "*.vhdl_ls_part" | sort | xargs cat >> "$OUTPUT_FILE"
+find "$(bazel info bazel-bin)" -name "*.vhdl_ls_part" -exec cat {} + >> "$OUTPUT_FILE"
 
 if [[ -f "${SUFFIX_FILE}" ]]; then
   cat "${SUFFIX_FILE}" >> "${OUTPUT_FILE}"

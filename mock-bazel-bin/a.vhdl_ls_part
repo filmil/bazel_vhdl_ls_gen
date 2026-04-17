@@ -1,3 +1,0 @@
-some_library.files = [
-  "your_vhdl_lib/my_package.vhd"
-]
