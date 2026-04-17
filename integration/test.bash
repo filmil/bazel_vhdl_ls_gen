@@ -23,6 +23,10 @@ grep -q "your_vhdl_lib/my_package.vhd" "${TOML_FILE}"
 grep -q "some_other_library.files = \[" "${TOML_FILE}"
 grep -q "my_vhdl_lib/my_package.vhd" "${TOML_FILE}"
 
+# Check for some_other_library_2
+grep -q "some_other_library_2.files = \[" "${TOML_FILE}"
+grep -q "your_vhdl_lib_2/my_package.vhd" "${TOML_FILE}"
+
 # Check for suffix
 grep -q "# Suffix" "${TOML_FILE}"
 

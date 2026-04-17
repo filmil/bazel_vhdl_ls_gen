@@ -26,6 +26,17 @@ filegroup(
     ],
 )
 
+filegroup(
+    name = "srcs_3",
+    srcs = ["my_vhdl_lib/my_package.vhd"],
+    tags = [
+        "vhdl_ls",
+        "vhdl_ls:lib=some_other_library_2",
+        "vhdl_ls:rem=my_vhdl_lib",
+        "vhdl_ls:add=your_vhdl_lib_2",
+    ],
+)
+
 sh_test(
     name = "test",
     srcs = [
