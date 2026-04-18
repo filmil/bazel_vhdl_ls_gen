@@ -38,17 +38,13 @@ def _vhdl_ls_aspect_impl(target, ctx):
 
         manifest_file = ctx.actions.declare_file(target.label.name + ".vhdl_ls_part")
 
-        files_formatted = ",\n".join([
-            '  "{add}{path}"'.format(
-                add = path_add,
-                path = f.path.removeprefix(path_remove),
-            )
-            for f in target.files.to_list()
-        ])
-
         content = '{lib}.files = [\n{files}\n]\n'.format(
             lib = lib_name,
-            files = files_formatted,
+            files = ",\n".join([
+                '  "{add}{path}"'.format(
+                    add=path_add,
+                    path=f.path.removeprefix(path_remove))
+                for f in target.files.to_list()])
         )
 
         ctx.actions.write(
