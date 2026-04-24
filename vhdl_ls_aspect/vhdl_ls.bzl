@@ -6,10 +6,10 @@ _VHDL_LS_REM_PREFIX_ALT = "vhdl_ls:rem="
 _VHDL_LS_ADD_PREFIX = "vhdl_ls_add_"
 _VHDL_LS_ADD_PREFIX_ALT = "vhdl_ls:add="
 
-_VHDL_RULE_KINDS = [
-    "filegroup",
-    "vhdl_library",
-]
+_VHDL_RULE_KINDS = {
+    "filegroup": True,
+    "vhdl_library": True,
+}
 
 
 def _vhdl_ls_aspect_impl(target, ctx):
@@ -38,17 +38,13 @@ def _vhdl_ls_aspect_impl(target, ctx):
 
         manifest_file = ctx.actions.declare_file(target.label.name + ".vhdl_ls_part")
 
-        files_formatted = ",\n".join([
-            '  "{add}{path}"'.format(
-                add = path_add,
-                path = f.path.removeprefix(path_remove),
-            )
-            for f in target.files.to_list()
-        ])
-
         content = '{lib}.files = [\n{files}\n]\n'.format(
             lib = lib_name,
-            files = files_formatted,
+            files = ",\n".join([
+                '  "{add}{path}"'.format(
+                    add=path_add,
+                    path=f.path.removeprefix(path_remove))
+                for f in target.files.to_list()])
         )
 
         ctx.actions.write(

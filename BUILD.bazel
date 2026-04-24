@@ -15,5 +15,8 @@ sh_test(
     srcs = [
         "test.bash",
     ],
+    data = [
+        "gen_vhdl_ls.bash",
+    ],
     size = "small",
 )
