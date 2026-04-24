@@ -1,12 +1,15 @@
 _VHDL_LS_TAG = "vhdl_ls"
 _VHDL_LS_LIB_PREFIX = "vhdl_ls_lib_"
+_VHDL_LS_LIB_PREFIX_ALT = "vhdl_ls:lib="
 _VHDL_LS_REM_PREFIX = "vhdl_ls_rem_"
+_VHDL_LS_REM_PREFIX_ALT = "vhdl_ls:rem="
 _VHDL_LS_ADD_PREFIX = "vhdl_ls_add_"
+_VHDL_LS_ADD_PREFIX_ALT = "vhdl_ls:add="
 
-_VHDL_RULE_KINDS = [
-    "filegroup",
-    "vhdl_library",
-]
+_VHDL_RULE_KINDS = {
+    "filegroup": True,
+    "vhdl_library": True,
+}
 
 
 def _vhdl_ls_aspect_impl(target, ctx):
@@ -22,24 +25,26 @@ def _vhdl_ls_aspect_impl(target, ctx):
         for tag in ctx.rule.attr.tags:
             if tag.startswith(_VHDL_LS_LIB_PREFIX):
                 lib_name = tag.removeprefix(_VHDL_LS_LIB_PREFIX)
-            if tag.startswith(_VHDL_LS_REM_PREFIX):
+            elif tag.startswith(_VHDL_LS_LIB_PREFIX_ALT):
+                lib_name = tag.removeprefix(_VHDL_LS_LIB_PREFIX_ALT)
+            elif tag.startswith(_VHDL_LS_REM_PREFIX):
                 path_remove = tag.removeprefix(_VHDL_LS_REM_PREFIX)
-            if tag.startswith(_VHDL_LS_ADD_PREFIX):
+            elif tag.startswith(_VHDL_LS_REM_PREFIX_ALT):
+                path_remove = tag.removeprefix(_VHDL_LS_REM_PREFIX_ALT)
+            elif tag.startswith(_VHDL_LS_ADD_PREFIX):
                 path_add = tag.removeprefix(_VHDL_LS_ADD_PREFIX)
+            elif tag.startswith(_VHDL_LS_ADD_PREFIX_ALT):
+                path_add = tag.removeprefix(_VHDL_LS_ADD_PREFIX_ALT)
 
         manifest_file = ctx.actions.declare_file(target.label.name + ".vhdl_ls_part")
 
-        files_formatted = ",\n".join([
-            '  "{add}{path}"'.format(
-                add = path_add,
-                path = f.path.removeprefix(path_remove),
-            )
-            for f in target.files.to_list()
-        ])
-
         content = '{lib}.files = [\n{files}\n]\n'.format(
             lib = lib_name,
-            files = files_formatted,
+            files = ",\n".join([
+                '  "{add}{path}"'.format(
+                    add=path_add,
+                    path=f.path.removeprefix(path_remove))
+                for f in target.files.to_list()])
         )
 
         ctx.actions.write(
