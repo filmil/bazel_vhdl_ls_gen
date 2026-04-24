@@ -13,18 +13,6 @@ fail() {
   return 1
 }
 
-assert_eq() {
-  local expected="$1"
-  local actual="$2"
-  local msg="$3"
-  if [[ "$expected" != "$actual" ]]; then
-    echo "FAIL: $msg"
-    echo "Expected: $expected"
-    echo "Actual: $actual"
-    return 1
-  fi
-}
-
 assert_file_exists() {
   local file="$1"
   local msg="$2"
