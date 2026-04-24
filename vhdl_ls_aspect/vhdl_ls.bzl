@@ -6,10 +6,10 @@ _VHDL_LS_REM_PREFIX_ALT = "vhdl_ls:rem="
 _VHDL_LS_ADD_PREFIX = "vhdl_ls_add_"
 _VHDL_LS_ADD_PREFIX_ALT = "vhdl_ls:add="
 
-_VHDL_RULE_KINDS = [
-    "filegroup",
-    "vhdl_library",
-]
+_VHDL_RULE_KINDS = {
+    "filegroup": True,
+    "vhdl_library": True,
+}
 
 
 def _vhdl_ls_aspect_impl(target, ctx):
