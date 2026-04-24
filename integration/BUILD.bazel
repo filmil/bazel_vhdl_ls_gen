@@ -46,4 +46,12 @@ sh_test(
         "vhdl_ls.toml",
     ],
     size = "small",
+    tags = ["vhdl_ls"],
+)
+
+genrule(
+    name = "unsupported_genrule",
+    outs = ["unsupported.vhd"],
+    cmd = "echo 'entity unsupported is end;' > $@",
+    tags = ["vhdl_ls"],
 )
