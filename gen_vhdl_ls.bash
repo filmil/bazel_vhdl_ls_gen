@@ -16,15 +16,11 @@ bazel build //... \
 
 printf "" > "${OUTPUT_FILE}"
 
-if [[ -f "${PREFIX_FILE}" ]]; then
-  cat "${PREFIX_FILE}" >> "${OUTPUT_FILE}"
-fi
-if [[ -f "${PREFIX_FILE}" ]]; then
-  cp "${PREFIX_FILE}" "${OUTPUT_FILE}"
-fi
-if [[ -f "${PREFIX_FILE2}" ]]; then
-  cat "${PREFIX_FILE2}" >> "${OUTPUT_FILE}"
-fi
+for f in "${PREFIX_FILE}" "${PREFIX_FILE2}"; do
+  if [[ -f "$f" ]]; then
+    cp "$f" "${OUTPUT_FILE}"
+  fi
+done
 
 # 3. Create the TOML header
 echo "[libraries]" >> "$OUTPUT_FILE"
