@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd $BUILD_WORKSPACE_DIRECTORY
+cd "$BUILD_WORKSPACE_DIRECTORY"
 
 PREFIX_FILE="vhdl_ls.toml.add"
 PREFIX_FILE2="vhdl_ls.toml.prefix"
@@ -18,7 +18,7 @@ printf "" > "${OUTPUT_FILE}"
 
 for f in "${PREFIX_FILE}" "${PREFIX_FILE2}"; do
   if [[ -f "$f" ]]; then
-    cp "$f" "${OUTPUT_FILE}"
+    cat "$f" >> "${OUTPUT_FILE}"
   fi
 done
 
@@ -27,7 +27,17 @@ echo "[libraries]" >> "$OUTPUT_FILE"
 
 # 4. Find all generated parts in bazel-bin and append them
 # Note: We look inside bazel-bin based on the current package path
-find "$(bazel info bazel-bin)" -name "*.vhdl_ls_part" -print0 | sort -z | xargs -0 cat >> "$OUTPUT_FILE"
+BAZEL_BIN=$(bazel info bazel-bin 2>/dev/null || echo "bazel-bin")
+
+# Use ./ prefix for relative paths to prevent find from interpreting them as options
+# Absolute paths are already safe as they start with /
+if [[ "${BAZEL_BIN}" == /* ]]; then
+  FIND_PATH="${BAZEL_BIN}"
+else
+  FIND_PATH="./${BAZEL_BIN}"
+fi
+
+find "${FIND_PATH}" -name "*.vhdl_ls_part" -print0 | sort -z | xargs -0 -r cat >> "$OUTPUT_FILE"
 
 if [[ -f "${SUFFIX_FILE}" ]]; then
   cat "${SUFFIX_FILE}" >> "${OUTPUT_FILE}"
