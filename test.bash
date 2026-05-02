@@ -117,5 +117,21 @@ if ! echo "$OUTPUT" | grep -q "# SUFFIX CONTENT"; then
   fail "Missing suffix content"
 fi
 
+# Test 5: Generation with both vhdl_ls.toml.add and vhdl_ls.toml.prefix
+run_test "with_both_prefix_files"
+echo "lib1.files = ['a.vhd']" > "${MOCK_BAZEL_BIN}/part1.vhdl_ls_part"
+echo "# ADD CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.add"
+echo "# PREFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.prefix"
+
+"${GEN_SCRIPT}"
+
+OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
+if ! echo "$OUTPUT" | grep -q "# ADD CONTENT"; then
+  fail "Missing add content when both files present"
+fi
+if ! echo "$OUTPUT" | grep -q "# PREFIX CONTENT"; then
+  fail "Missing prefix content when both files present"
+fi
+
 echo "All tests passed."
 rm -rf "$TEST_DIR"
