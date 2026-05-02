@@ -127,10 +127,10 @@ echo "# PREFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.prefix"
 
 OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
 if ! echo "$OUTPUT" | grep -q "# ADD CONTENT"; then
-  fail "Missing add content when both prefix files exist"
+  fail "Missing add content when both files present"
 fi
 if ! echo "$OUTPUT" | grep -q "# PREFIX CONTENT"; then
-  fail "Missing prefix content when both prefix files exist"
+  fail "Missing prefix content when both files present"
 fi
 
 echo "All tests passed."
