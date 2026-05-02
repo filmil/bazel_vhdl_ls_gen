@@ -27,7 +27,12 @@ echo "[libraries]" >> "$OUTPUT_FILE"
 
 # 4. Find all generated parts in bazel-bin and append them
 # Note: We look inside bazel-bin based on the current package path
-find "$(bazel info bazel-bin)" -name "*.vhdl_ls_part" -print0 | sort -z | xargs -0 cat >> "$OUTPUT_FILE"
+BAZEL_BIN="bazel-bin"
+if [[ ! -d "${BAZEL_BIN}" ]]; then
+  BAZEL_BIN=$(bazel info bazel-bin)
+fi
+
+find "${BAZEL_BIN}" -name "*.vhdl_ls_part" -print0 | sort -z | xargs -0 cat >> "$OUTPUT_FILE"
 
 if [[ -f "${SUFFIX_FILE}" ]]; then
   cat "${SUFFIX_FILE}" >> "${OUTPUT_FILE}"
