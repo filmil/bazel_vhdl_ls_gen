@@ -18,7 +18,7 @@ printf "" > "${OUTPUT_FILE}"
 
 for f in "${PREFIX_FILE}" "${PREFIX_FILE2}"; do
   if [[ -f "$f" ]]; then
-    cp "$f" "${OUTPUT_FILE}"
+    cat "$f" >> "${OUTPUT_FILE}"
   fi
 done
 
