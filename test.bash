@@ -39,7 +39,7 @@ cat << 'MOCK_EOF' > "${MOCK_BAZEL_PATH}/bazel"
 if [[ "$1" == "build" ]]; then
   echo "Mocking bazel build"
 elif [[ "$1" == "info" && "$2" == "bazel-bin" ]]; then
-  echo "$MOCK_BAZEL_BIN"
+  echo "${MOCK_BAZEL_BIN_VAL:-$MOCK_BAZEL_BIN}"
 else
   echo "Unexpected bazel call: $@"
   return 1 2>/dev/null || false
@@ -56,6 +56,7 @@ run_test() {
   # Clean up workspace and mock bazel-bin for each test
   rm -rf "${BUILD_WORKSPACE_DIRECTORY:?}/"*
   rm -rf "${MOCK_BAZEL_BIN:?}/"*
+  unset MOCK_BAZEL_BIN_VAL
 }
 
 # Test 1: Basic generation (no add/prefix/suffix files)
@@ -131,6 +132,19 @@ if ! echo "$OUTPUT" | grep -q "# ADD CONTENT"; then
 fi
 if ! echo "$OUTPUT" | grep -q "# PREFIX CONTENT"; then
   fail "Missing prefix content when both files present"
+fi
+
+# Test 6: Generation with relative bazel-bin
+run_test "relative_bazel_bin"
+export MOCK_BAZEL_BIN_VAL="bazel-bin"
+mkdir -p "${BUILD_WORKSPACE_DIRECTORY}/bazel-bin"
+echo "lib_rel.files = ['rel.vhd']" > "${BUILD_WORKSPACE_DIRECTORY}/bazel-bin/part_rel.vhdl_ls_part"
+
+"${GEN_SCRIPT}"
+
+OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
+if ! echo "$OUTPUT" | grep -q "lib_rel.files = \['rel.vhd'\]"; then
+  fail "Missing relative part content"
 fi
 
 echo "All tests passed."
