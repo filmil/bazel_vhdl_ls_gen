@@ -42,7 +42,7 @@ elif [[ "$1" == "info" && "$2" == "bazel-bin" ]]; then
   echo "$MOCK_BAZEL_BIN"
 else
   echo "Unexpected bazel call: $@"
-  return 1 2>/dev/null || false
+  exit 1
 fi
 MOCK_EOF
 chmod +x "${MOCK_BAZEL_PATH}/bazel"
