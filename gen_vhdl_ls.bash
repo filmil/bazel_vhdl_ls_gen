@@ -32,7 +32,7 @@ if [[ ! -d "${BAZEL_BIN}" ]]; then
   BAZEL_BIN=$(bazel info bazel-bin)
 fi
 
-find "${BAZEL_BIN}" -name "*.vhdl_ls_part" -print0 | sort -z | xargs -0 cat >> "$OUTPUT_FILE"
+find "${BAZEL_BIN}/" -name "*.vhdl_ls_part" -print0 | sort -z | xargs -0 cat >> "$OUTPUT_FILE"
 
 if [[ -f "${SUFFIX_FILE}" ]]; then
   cat "${SUFFIX_FILE}" >> "${OUTPUT_FILE}"
