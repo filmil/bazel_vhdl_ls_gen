@@ -71,14 +71,14 @@ assert_file_exists "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml" "vhdl_ls.toml sho
 # Read contents
 OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
 # Check header
-if ! echo "$OUTPUT" | grep -q '\[libraries\]'; then
+if [[ "$OUTPUT" != *"[libraries]"* ]]; then
   fail "Missing [libraries] header"
 fi
 # Check parts
-if ! echo "$OUTPUT" | grep -q "lib1.files = \['a.vhd'\]"; then
+if [[ "$OUTPUT" != *"lib1.files = ['a.vhd']"* ]]; then
   fail "Missing part1"
 fi
-if ! echo "$OUTPUT" | grep -q "lib2.files = \['b.vhd'\]"; then
+if [[ "$OUTPUT" != *"lib2.files = ['b.vhd']"* ]]; then
   fail "Missing part2"
 fi
 
@@ -90,7 +90,7 @@ echo "# ADD CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.add"
 "${GEN_SCRIPT}"
 
 OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
-if ! echo "$OUTPUT" | grep -q "# ADD CONTENT"; then
+if [[ "$OUTPUT" != *"# ADD CONTENT"* ]]; then
   fail "Missing add content"
 fi
 
@@ -102,7 +102,7 @@ echo "# PREFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.prefix"
 "${GEN_SCRIPT}"
 
 OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
-if ! echo "$OUTPUT" | grep -q "# PREFIX CONTENT"; then
+if [[ "$OUTPUT" != *"# PREFIX CONTENT"* ]]; then
   fail "Missing prefix content"
 fi
 
@@ -114,7 +114,7 @@ echo "# SUFFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.suffix"
 "${GEN_SCRIPT}"
 
 OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
-if ! echo "$OUTPUT" | grep -q "# SUFFIX CONTENT"; then
+if [[ "$OUTPUT" != *"# SUFFIX CONTENT"* ]]; then
   fail "Missing suffix content"
 fi
 
@@ -127,10 +127,10 @@ echo "# PREFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.prefix"
 "${GEN_SCRIPT}"
 
 OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
-if ! echo "$OUTPUT" | grep -q "# ADD CONTENT"; then
+if [[ "$OUTPUT" != *"# ADD CONTENT"* ]]; then
   fail "Missing add content when both files present"
 fi
-if ! echo "$OUTPUT" | grep -q "# PREFIX CONTENT"; then
+if [[ "$OUTPUT" != *"# PREFIX CONTENT"* ]]; then
   fail "Missing prefix content when both files present"
 fi
 
