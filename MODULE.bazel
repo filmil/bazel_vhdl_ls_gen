@@ -4,6 +4,8 @@ module(
     bazel_compatibility = [">=8.0.0"],
 )
 
-bazel_dep(name = "bazel_skylib", version = "1.8.1")
-bazel_dep(name = "bazel_lib", version = "3.1.0")
-bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+bazel_dep(name = "bazel_lib", version = "3.3.1")
+bazel_dep(name = "rules_shell", version = "0.8.0")
+
+bazel_dep(name = "protobuf", version = "34.1")
