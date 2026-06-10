@@ -49,6 +49,22 @@ chmod +x "${MOCK_BAZEL_PATH}/bazel"
 
 export PATH="${MOCK_BAZEL_PATH}:$PATH"
 
+# Update mock bazel to write parts during "build"
+cat << 'MOCK_EOF' > "${MOCK_BAZEL_PATH}/bazel"
+#!/bin/bash
+if [[ "$1" == "build" ]]; then
+  echo "Mocking bazel build"
+  if [[ -n "$MOCK_WRITE_PARTS" ]]; then
+    eval "$MOCK_WRITE_PARTS"
+  fi
+elif [[ "$1" == "info" && "$2" == "bazel-bin" ]]; then
+  echo "${MOCK_BAZEL_BIN_VAL:-$MOCK_BAZEL_BIN}"
+else
+  echo "Unexpected bazel call: $@"
+  exit 1
+fi
+MOCK_EOF
+
 run_test() {
   local test_name="$1"
   echo "--- Running test: ${test_name} ---"
@@ -57,12 +73,12 @@ run_test() {
   rm -rf "${BUILD_WORKSPACE_DIRECTORY:?}/"*
   rm -rf "${MOCK_BAZEL_BIN:?}/"*
   unset MOCK_BAZEL_BIN_VAL
+  unset MOCK_WRITE_PARTS
 }
 
 # Test 1: Basic generation (no add/prefix/suffix files)
 run_test "basic_generation"
-echo "lib1.files = ['a.vhd']" > "${MOCK_BAZEL_BIN}/part1.vhdl_ls_part"
-echo "lib2.files = ['b.vhd']" > "${MOCK_BAZEL_BIN}/part2.vhdl_ls_part"
+export MOCK_WRITE_PARTS="echo \"lib1.files = ['a.vhd']\" > \"${MOCK_BAZEL_BIN}/part1.vhdl_ls_part\"; echo \"lib2.files = ['b.vhd']\" > \"${MOCK_BAZEL_BIN}/part2.vhdl_ls_part\""
 
 # Run the script
 "${GEN_SCRIPT}"
@@ -84,7 +100,7 @@ fi
 
 # Test 2: Generation with vhdl_ls.toml.add
 run_test "with_add_file"
-echo "lib1.files = ['a.vhd']" > "${MOCK_BAZEL_BIN}/part1.vhdl_ls_part"
+export MOCK_WRITE_PARTS="echo \"lib1.files = ['a.vhd']\" > \"${MOCK_BAZEL_BIN}/part1.vhdl_ls_part\""
 echo "# ADD CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.add"
 
 "${GEN_SCRIPT}"
@@ -96,7 +112,7 @@ fi
 
 # Test 3: Generation with vhdl_ls.toml.prefix
 run_test "with_prefix_file"
-echo "lib1.files = ['a.vhd']" > "${MOCK_BAZEL_BIN}/part1.vhdl_ls_part"
+export MOCK_WRITE_PARTS="echo \"lib1.files = ['a.vhd']\" > \"${MOCK_BAZEL_BIN}/part1.vhdl_ls_part\""
 echo "# PREFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.prefix"
 
 "${GEN_SCRIPT}"
@@ -108,7 +124,7 @@ fi
 
 # Test 4: Generation with vhdl_ls.toml.suffix
 run_test "with_suffix_file"
-echo "lib1.files = ['a.vhd']" > "${MOCK_BAZEL_BIN}/part1.vhdl_ls_part"
+export MOCK_WRITE_PARTS="echo \"lib1.files = ['a.vhd']\" > \"${MOCK_BAZEL_BIN}/part1.vhdl_ls_part\""
 echo "# SUFFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.suffix"
 
 "${GEN_SCRIPT}"
@@ -120,7 +136,7 @@ fi
 
 # Test 5: Generation with both vhdl_ls.toml.add and vhdl_ls.toml.prefix
 run_test "with_both_prefix_files"
-echo "lib1.files = ['a.vhd']" > "${MOCK_BAZEL_BIN}/part1.vhdl_ls_part"
+export MOCK_WRITE_PARTS="echo \"lib1.files = ['a.vhd']\" > \"${MOCK_BAZEL_BIN}/part1.vhdl_ls_part\""
 echo "# ADD CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.add"
 echo "# PREFIX CONTENT" > "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml.prefix"
 
@@ -138,13 +154,31 @@ fi
 run_test "relative_bazel_bin"
 export MOCK_BAZEL_BIN_VAL="bazel-bin"
 mkdir -p "${BUILD_WORKSPACE_DIRECTORY}/bazel-bin"
-echo "lib_rel.files = ['rel.vhd']" > "${BUILD_WORKSPACE_DIRECTORY}/bazel-bin/part_rel.vhdl_ls_part"
+export MOCK_WRITE_PARTS="echo \"lib_rel.files = ['rel.vhd']\" > \"${BUILD_WORKSPACE_DIRECTORY}/bazel-bin/part_rel.vhdl_ls_part\""
 
 "${GEN_SCRIPT}"
 
 OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
 if ! echo "$OUTPUT" | grep -q "lib_rel.files = \['rel.vhd'\]"; then
   fail "Missing relative part content"
+fi
+
+# Test 7: Stale fragments are deleted
+run_test "stale_fragments"
+# Place a stale fragment in the mock bazel-bin
+echo "stale.files = ['stale.vhd']" > "${MOCK_BAZEL_BIN}/stale.vhdl_ls_part"
+
+# Write a new part during build
+export MOCK_WRITE_PARTS="echo \"new.files = ['new.vhd']\" > \"${MOCK_BAZEL_BIN}/new.vhdl_ls_part\""
+
+"${GEN_SCRIPT}"
+
+OUTPUT=$(cat "${BUILD_WORKSPACE_DIRECTORY}/vhdl_ls.toml")
+if echo "$OUTPUT" | grep -q "stale.files"; then
+  fail "Stale fragment was not deleted"
+fi
+if ! echo "$OUTPUT" | grep -q "new.files"; then
+  fail "New fragment is missing"
 fi
 
 echo "All tests passed."
