@@ -32,7 +32,7 @@ filegroup(
         "vhdl_ls",
         # Add this tag to name the library `some_library`. That is what vhdl_ls
         # will know it as.
-        "vhdl_ls_lib_some_library",
+        "vhdl_ls:lib=some_library",
     ],
 )
 
@@ -40,7 +40,20 @@ filegroup(
     name = "srcs_2",
     srcs = ["my_vhdl_lib/my_package.vhd"],
     # This repeats the above exercise, but with a different library.
-    tags = ["vhdl_ls", "vhdl_ls_lib_some_other_library"],
+    tags = ["vhdl_ls", "vhdl_ls:lib=some_other_library"],
+)
+
+filegroup(
+    name = "srcs_3",
+    srcs = ["my_vhdl_lib/my_package.vhd"],
+    tags = [
+        "vhdl_ls",
+        "vhdl_ls:lib=some_other_library",
+        # Example of stripping an existing prefix from the files.
+        "vhdl_ls:rem=my_vhdl_lib",
+        # Example of adding a new prefix to the files.
+        "vhdl_ls:add=your_vhdl_lib",
+    ],
 )
 ```
 
@@ -67,5 +80,9 @@ reusing source file lists anyways, so you are bound to have tool-independent
 file definitions already.
 
 If you need to add custom content to the generated file, create a file named
-`vhdl_ls.toml.add`, and add any content to be put into the *header* of the file.
+`vhdl_ls.toml.add` or `vhdl_ls.toml.prefix`, and add any content to be put into the *header* of the file.
+Content in these files will be prepended to the generated `vhdl_ls.toml` file.
+
+If you need to add custom content to the generated file *after* the generated lines, create a file named
+`vhdl_ls.toml.suffix`, and add any content to be put into the *footer* of the file.
 
