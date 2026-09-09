@@ -49,7 +49,13 @@ echo "[libraries]" >> "$OUTPUT_FILE"
 # 4. Find all generated parts in bazel-bin and append them
 # Note: We look inside bazel-bin based on the current package path
 # Use -L to ensure we traverse bazel-bin if it's a symlink
-find -L "${FIND_PATH}" -name "*.vhdl_ls_part" -print0 | sort -z | xargs -0 -r cat >> "$OUTPUT_FILE"
+# LC_ALL=C makes this byte order. Without it `sort` uses the collation of
+# whatever locale the caller happens to have, and a locale such as
+# en_US.UTF-8 ignores punctuation, so `srcs.vhdl_ls_part` sorts after
+# `srcs_2.vhdl_ls_part` there and before it under C. The generated file
+# then differs between two machines that ran the same command, which
+# matters because it is committed to the tree.
+find -L "${FIND_PATH}" -name "*.vhdl_ls_part" -print0 | LC_ALL=C sort -z | xargs -0 -r cat >> "$OUTPUT_FILE"
 
 if [[ -f "${SUFFIX_FILE}" ]]; then
   cat "${SUFFIX_FILE}" >> "${OUTPUT_FILE}"

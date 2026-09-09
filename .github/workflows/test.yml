@@ -26,6 +26,18 @@ jobs:
         run: "bazel build //..."
       - name: Test
         run: "bazel test //..."
+      # BCR presubmit runs `bazel test //...` in this module and nothing else,
+      # so the test has to pass against the vhdl_ls.toml that is committed.
+      # This step used to run the generator first, which rewrote that file and
+      # hid the fact that the committed one was stale. BCR rejected
+      # vhdl_ls_gen@0.4.1 for exactly that, while this workflow stayed green.
       - name: Integration test
-        run: "cd integration && bazel run @vhdl_ls_gen//:gen && bazel test //..."
+        run: "cd integration && bazel test //..."
+      # Regenerating must be a no-op. A diff here means vhdl_ls.toml was
+      # committed stale, which is what BCR would reject.
+      - name: Integration vhdl_ls.toml is up to date
+        run: |
+          cd integration
+          bazel run @vhdl_ls_gen//:gen
+          git diff --exit-code -- vhdl_ls.toml
 
